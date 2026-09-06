@@ -1,21 +1,47 @@
-MIT License
-
-Copyright (c) 2026 Eren Taha Akkuş
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+/*
+ *  MIT License
+ *
+ *  Copyright (c) 2026 Eren Taha Akkuş
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ *
+ *  ========================================================
+ *  CONTRIBUTION AND ATTRIBUTION NOTES
+ *  ========================================================
+ *
+ *  - The COM/DLL-based ABE bypass methodology used as the foundation of
+ *    this project was originally sourced from the work of the user "xaitax".
+ *
+ *  - However, all of the following critical enhancements and developments
+ *    were exclusively implemented by Eren Taha Akkuş:
+ *
+ *       * Designing and integrating the compilation menu required to
+ *         build the project properly.
+ *       * Identifying, debugging, and resolving all compilation errors
+ *         that existed in the original ABE bypass source codes.
+ *       * Fixing runtime issues and logic flaws to ensure system
+ *         stability.
+ *       * Introducing new features and overall functionality upgrades.
+ *       * Optimizing the entire codebase to guarantee that the project
+ *         compiles and operates flawlessly in its current state.
+ *
+ *  - In summary: While the base bypass method is attributed to "xaitax",
+ *    the fully working, stable, and enhanced build environment is the
+ *    result of Eren Taha Akkuş's comprehensive development efforts.
+ */
