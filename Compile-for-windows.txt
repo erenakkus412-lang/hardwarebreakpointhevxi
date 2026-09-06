@@ -1,8 +1,0 @@
-g++ -std=c++23 -o 31.exe 31.cpp \
-    NullGate/src/nullgate/syscalls.cpp \
-    NullGate/src/nullgate/obfuscation.cpp \
-    NullGate/src/nullgate/syscalls.S \
-    -I"C:/Users/eren/Desktop/hevxistealer/NullGate/include" \
-    -I"C:/Users/eren/Desktop/hevxistealer/vcpkg/installed/x64-mingw-static/include" \
-    -L"C:/Users/eren/Desktop/hevxistealer/vcpkg/installed/x64-mingw-static/lib" \
-    -lpsapi -lshlwapi -lbcrypt -lsqlite3 -lzip -lcurl -static -O2
