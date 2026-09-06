@@ -1,32 +1,181 @@
-# Windows Process Debugging & Hardware Breakpoint Research Framework
+# Windows Process Debugging & App‑Bound Encryption Bypass Framework
 
-**A Deep Dive into Windows Internals: Indirect Syscalls and Hardware Breakpoints.**
+**A Comprehensive Educational Suite for Understanding Windows Internals: Hardware Breakpoints, Indirect Syscalls, and COM Elevation.**
 
-This repository serves as a comprehensive educational framework for understanding how advanced Windows process debugging techniques work, specifically targeting defensive and blue-team researchers. This project demonstrates how to monitor processes, enumerate memory regions, and utilize hardware debug registers (DR0/DR7) using modern, stealthier syscall implementations.
+---
 
-## 🧠 Overview
-Modern Endpoint Detection and Response (EDR) solutions and advanced threats rely on low-level Windows APIs to monitor and control system behavior. This framework provides a practical, clean, and educational example of how these internals operate, allowing researchers to better understand how to detect or defend against these techniques.
+## ENGLISH
 
-## 🛠️ Key Features
-- **Indirect Syscall Implementation (NullGate):** Demonstrates a modern, stealthy approach to calling Native API functions (`NtGetContextThread`, `NtSetContextThread`, etc.) without relying on user-mode hooks, showcasing how advanced malware and EDRs operate under the hood.
-- **Hardware Breakpoints (DR0/DR7):** Shows how to enumerate all threads of a process (`NtGetNextThread`), suspend them, and set/clear hardware breakpoints directly in the CPU debug registers. This bypasses traditional software breakpoints (e.g., 0xCC).
-- **Process Memory Enumeration:** Provides utilities to map out the virtual memory regions of a target process using `VirtualQueryEx`.
-- **SeDebugPrivilege:** Demonstrates the proper way to acquire the powerful debugging privilege required for low-level operations.
+### 1. Overview
 
-## 🎯 Purpose & Disclaimer
-**This project is strictly for educational and defensive purposes.** 
-The goal is to aid Blue Teamers, SOC analysts, and malware researchers in understanding the low-level mechanics of process manipulation, so they can better detect, analyze, and defend against sophisticated threats. All examples are run against safe, local test processes (e.g., Notepad).
+This repository is a **professional-grade research and educational framework** that combines two advanced Windows security bypass techniques into a single, well-documented codebase. It is designed for cybersecurity researchers, Blue Teamers, SOC analysts, and Red Team professionals who want to understand the low-level internals of the Windows operating system.
 
-## 👨‍💻 Author
-Developed by **Eren Taha Akkuş**, a dedicated and passionate **Turkish Cybersecurity Researcher**, focused on Windows internals and offensive/defensive security research.
+The framework demonstrates:
+- How to manipulate processes and threads at the kernel level without triggering user-mode hooks.
+- How to extract encrypted browser data (cookies, passwords, payment cards) by bypassing Application-Bound Encryption (ABE) using native Windows COM interfaces.
 
-## 🚀 Getting Started
-> **Requirements:** Windows 10/11 (x64), Administrator privileges.
+All code is written from scratch, with a strong emphasis on **stealth**, **stability**, and **educational value**.
 
-1. Clone the repository.
-2. Compile with x64 architecture (e.g., using MSVC or MinGW-w64).
-3. Run as Administrator to grant SeDebugPrivilege for process debugging.
-4. Observe the console output as the framework analyzes a test process and configures hardware breakpoints.
+---
 
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### 2. Technical Deep Dive
+
+#### 2.1. Methodology 1: Hardware Breakpoints & Indirect Syscalls
+
+This component replicates the behavior of advanced EDRs (Endpoint Detection and Response) and sophisticated malware by using **CPU debug registers** (DR0–DR7) to set hardware breakpoints.
+
+- **Indirect Syscalls (NullGate):**  
+  Instead of calling `NtGetContextThread` or `NtSetContextThread` through the standard `syscall` instruction or the Windows API (which are often hooked by security products), this framework uses an **indirect syscall** technique. It dynamically resolves the System Service Number (SSN) and executes the syscall directly from a non-hooked memory region (e.g., `ntdll.dll`). This bypasses user-mode EDR hooks placed on the `ntdll!Zw*` functions.
+
+- **Hardware Breakpoint Management (DR0/DR7):**  
+  The framework enumerates all threads of a target process using `NtGetNextThread` (undocumented but stable). It then suspends each thread, modifies the debug registers to set execution or access breakpoints, and resumes them. Unlike software breakpoints (`0xCC`), hardware breakpoints do not modify the code in memory, making them extremely difficult to detect via traditional integrity checks.
+
+- **Process Memory Enumeration:**  
+  Using `VirtualQueryEx`, the tool maps out the virtual address space of the target process, identifying writable, executable, and private memory regions – a common reconnaissance step before injecting payloads or extracting sensitive data.
+
+#### 2.2. Methodology 2: App-Bound Encryption (ABE) Bypass via COM Elevator
+
+Modern Chromium-based browsers (Chrome, Edge, Brave, Opera) protect sensitive data (cookies, passwords, credit cards) using **App-Bound Encryption (ABE)**. The decryption key is stored in the browser's `Local State` file, encrypted with a system-protected key that only the browser’s Elevator COM service can decrypt.
+
+- **Direct COM Elevator (No DLL Injection):**  
+  Instead of injecting a DLL into the browser process (which is highly detectable), this framework communicates directly with the Elevator COM server (`IElevator` / `IElevator2`). It uses `CoCreateInstance` to instantiate the server and invokes the `DecryptData` method manually via vtable offsets.
+
+- **Dynamic CLSID/IID Resolution:**  
+  The framework scans the Windows Registry (HKCR\CLSID) to automatically discover the correct CLSID and IID for the installed browsers. It supports:
+  - **Chrome**: Fallback from `IElevator2` (Chrome 144+) to `IElevator` (older versions).
+  - **Edge**: Specific interface chain (IEdgeElevator / IEdgeElevator2).
+  - **Avast Browser**: Uses a different vtable slot (offset 12 instead of 3).
+  
+- **Self-Contained Parsing:**  
+  The `Local State` file (JSON) is parsed manually – no external JSON libraries are required. The `app_bound_encrypted` Base64 string is decoded and passed to the COM decryptor. The decrypted binary key is then saved to disk.
+
+- **AES-GCM Decryption:**  
+  When a key candidate is found in memory (or provided), the framework uses Windows BCrypt API to decrypt `v20`-formatted cookies, extracting the plaintext value for exfiltration or analysis.
+
+---
+
+### 3. Key Features
+
+| Module | Key Features |
+| :--- | :--- |
+| **Hardware Breakpoint Engine** | - Indirect Syscall execution (bypass user-mode hooks)<br>- Thread enumeration & suspension (`NtGetNextThread`)<br>- DR0/DR7 debug register manipulation<br>- Memory region scanning (`VirtualQueryEx`) |
+| **ABE Bypass Engine** | - Direct COM Elevator invocation (No DLL injection)<br>- Automatic browser discovery (Chrome, Edge, Brave, Opera, Vivaldi)<br>- CLSID/IID resolution from Registry<br>- Manual JSON + Base64 parsing<br>- AES-GCM decryption via BCrypt |
+
+---
+
+### 4. Purpose & Legal Disclaimer
+
+**IMPORTANT:** This project is provided **strictly for educational and defensive security research**.
+
+The sole purpose of this framework is to help security professionals understand how low-level Windows APIs, hardware debug registers, and COM Elevation services work. By studying this code, Blue Teamers can develop better detection rules, SOC analysts can understand attack patterns, and malware researchers can reverse-engineer sophisticated threats more effectively.
+
+**You are solely responsible for your actions.**
+- **DO NOT** use this software against any system, network, or data without explicit, written permission from the owner.
+- **DO NOT** use this software to steal data, bypass security controls for malicious purposes, or violate any applicable laws.
+- The author (Eren Taha Akkuş) assumes **zero liability** for any damages, legal consequences, or ethical violations arising from the misuse of this software.
+- By downloading, compiling, or executing this software, you acknowledge that you have read this disclaimer and agree to take full responsibility for your actions.
+
+---
+
+### 5. Author & Acknowledgments
+
+**Author:**  
+Eren Taha Akkuş – Turkish Cybersecurity Researcher, specializing in Windows Internals, Offensive/Defensive Security, and Reverse Engineering.
+
+**GitHub:** [erenakkus412-lang](https://github.com/erenakkus412-lang)
+
+**Acknowledgments:**  
+- The broader Windows security community for sharing research on indirect syscalls and COM Elevation.
+- xaitax for initial public research on the COM Elevator technique (inspiration only; the implementation here is entirely original).
+
+---
+
+---
+
+## 🇹🇷 TÜRKÇE
+
+### 1. Genel Bakış
+
+Bu depo, **profesyonel seviyede bir araştırma ve eğitim çerçevesidir**. Windows işletim sistemindeki iki gelişmiş güvenlik atlatma tekniğini, tek bir kapsamlı kod tabanında birleştirir. Siber güvenlik araştırmacıları, Mavi Takım (Blue Team) uzmanları, SOC analistleri ve Kırmızı Takım (Red Team) profesyonelleri için tasarlanmıştır.
+
+Çerçeve şunları göstermektedir:
+- Kullanıcı modu hook'larını tetiklemeden, süreç ve iş parçacıklarının çekirdek seviyesinde nasıl manipüle edileceği.
+- Yerel Windows COM arayüzlerini kullanarak Uygulama Bağlı Şifreleme'yi (ABE) atlatarak şifrelenmiş tarayıcı verilerinin (çerezler, parolalar, kart bilgileri) nasıl çıkarılacağı.
+
+Tüm kodlar sıfırdan yazılmış olup, **gizlilik**, **kararlılık** ve **eğitsel değer** üzerine odaklanmıştır.
+
+---
+
+### 2. Teknik Derinlemesine İnceleme
+
+#### 2.1. Metodoloji 1: Donanım Kesme Noktaları ve Dolaylı Syscall'lar
+
+Bu bileşen, gelişmiş EDR'lerin (Uç Nokta Algılama ve Müdahale) ve sofistike kötü amaçlı yazılımların davranışlarını taklit ederek, donanım kesme noktaları ayarlamak için **CPU debug register'larını** (DR0–DR7) kullanır.
+
+- **Dolaylı Syscall'lar (NullGate):**  
+  `NtGetContextThread` veya `NtSetContextThread` fonksiyonlarını standart `syscall` talimatı veya Windows API'si (güvenlik ürünleri tarafından sıklıkla hook'lanır) üzerinden çağırmak yerine, bu çerçeve **dolaylı syscall** tekniğini kullanır. Sistem Servis Numarasını (SSN) dinamik olarak çözümler ve syscall'u doğrudan hook'lanmamış bir bellek bölgesinden yürütür. Bu, `ntdll!Zw*` fonksiyonlarına yerleştirilen kullanıcı modu EDR hook'larını atlar.
+
+- **Donanım Kesme Noktası Yönetimi (DR0/DR7):**  
+  Çerçeve, `NtGetNextThread` (belgelenmemiş ancak kararlı) kullanarak hedef sürecin tüm iş parçacıklarını numaralandırır. Ardından her iş parçacığını askıya alır, yürütme veya erişim kesme noktaları ayarlamak için debug register'larını değiştirir ve devam ettirir. Yazılım kesme noktalarından (`0xCC`) farklı olarak, donanım kesme noktaları bellekteki kodu değiştirmez, bu da geleneksel bütünlük kontrolleriyle tespit edilmelerini son derece zorlaştırır.
+
+- **Süreç Bellek Numaralandırması:**  
+  `VirtualQueryEx` kullanılarak hedef sürecin sanal adres alanı haritalanır; yazılabilir, çalıştırılabilir ve özel bellek bölgeleri tespit edilir. Bu, yük enjekte etmeden veya hassas verileri çıkarmadan önce yapılan yaygın bir keşif adımıdır.
+
+#### 2.2. Metodoloji 2: COM Elevator ile Uygulama Bağlı Şifreleme Atlatma
+
+Modern Chromium tabanlı tarayıcılar (Chrome, Edge, Brave, Opera), hassas verileri (çerezler, parolalar, kredi kartları) **Uygulama Bağlı Şifreleme (ABE)** kullanarak korur. Şifre çözme anahtarı, tarayıcının `Local State` dosyasında saklanır ve yalnızca tarayıcının Elevator COM hizmetinin çözebileceği sistem korumalı bir anahtarla şifrelenir.
+
+- **Doğrudan COM Elevator (DLL Enjeksiyonu Yok):**  
+  Tarayıcı sürecine bir DLL enjekte etmek (ki bu oldukça tespit edilebilirdir) yerine, bu çerçeve doğrudan Elevator COM sunucusuyla (`IElevator` / `IElevator2`) iletişim kurar. `CoCreateInstance` kullanarak sunucuyu başlatır ve `DecryptData` metodunu vtable ofsetleri üzerinden manuel olarak çağırır.
+
+- **Dinamik CLSID/IID Çözümlemesi:**  
+  Çerçeve, yüklü tarayıcılar için doğru CLSID ve IID'yi otomatik olarak bulmak üzere Windows Kayıt Defteri'ni (HKCR\CLSID) tarar. Şunları destekler:
+  - **Chrome**: IElevator2'den (Chrome 144+) eski sürümler için IElevator'a geri düşer.
+  - **Edge**: Özel arayüz zinciri (IEdgeElevator / IEdgeElevator2).
+  - **Avast Browser**: Farklı bir vtable yuvası kullanır (3 yerine ofset 12).
+
+- **Kendi Kendine Yeten Ayrıştırma:**  
+  `Local State` dosyası (JSON) manuel olarak ayrıştırılır – harici JSON kütüphanelerine ihtiyaç yoktur. Base64 kodlanmış `app_bound_encrypted` dizesi çözülür ve COM şifre çözücüye iletilir. Çözülen ikili anahtar diske kaydedilir.
+
+- **AES-GCM Şifre Çözme:**  
+  Bellekte (veya sağlanan) bir anahtar adayı bulunduğunda, çerçeve Windows BCrypt API'sini kullanarak `v20` formatındaki çerezleri çözer ve analiz veya sızdırma için düz metin değerini çıkarır.
+
+---
+
+### 3. Temel Özellikler
+
+| Modül | Temel Özellikler |
+| :--- | :--- |
+| **Donanım Kesme Noktası Motoru** | - Dolaylı Syscall yürütme (kullanıcı modu hook'larını atlar)<br>- İş parçacığı numaralandırma ve askıya alma (`NtGetNextThread`)<br>- DR0/DR7 debug register manipülasyonu<br>- Bellek bölgesi tarama (`VirtualQueryEx`) |
+| **ABE Atlatma Motoru** | - Doğrudan COM Elevator çağrısı (DLL enjeksiyonu yok)<br>- Otomatik tarayıcı keşfi (Chrome, Edge, Brave, Opera, Vivaldi)<br>- Kayıt Defteri'nden CLSID/IID çözümlemesi<br>- Manuel JSON + Base64 ayrıştırma<br>- BCrypt ile AES-GCM şifre çözme |
+
+---
+
+### 4. Amaç ve Yasal Sorumluluk Reddi
+
+**ÖNEMLİ:** Bu proje **yalnızca eğitim ve savunma amaçlı güvenlik araştırmaları** için sağlanmaktadır.
+
+Bu çerçevenin tek amacı, güvenlik uzmanlarının düşük seviyeli Windows API'lerinin, donanım debug register'larının ve COM Elevator hizmetlerinin nasıl çalıştığını anlamalarına yardımcı olmaktır. Bu kodu inceleyerek Mavi Takım uzmanları daha iyi tespit kuralları geliştirebilir, SOC analistleri saldırı modellerini anlayabilir ve kötü amaçlı yazılım araştırmacıları sofistike tehditleri daha etkili bir şekilde tersine mühendislik yapabilir.
+
+**Eylemlerinizden tamamen siz sorumlusunuz.**
+- Bu yazılımı, sahibinden açık ve yazılı izin almadan **HİÇBİR** sistem, ağ veya veriye karşı KULLANMAYIN.
+- Bu yazılımı veri çalmak, kötü amaçlı güvenlik kontrollerini atlatmak veya geçerli yasaları ihlal etmek için KULLANMAYIN.
+- Yazar (Eren Taha Akkuş), bu yazılımın kötüye kullanımından kaynaklanan herhangi bir hasar, yasal sonuç veya etik ihlalden **KESİNLİKLE SORUMLU DEĞİLDİR**.
+- Bu yazılımı indirerek, derleyerek veya çalıştırarak, bu reddi okuduğunuzu ve eylemlerinizin tüm sorumluluğunu üstlenmeyi kabul ettiğinizi beyan edersiniz.
+
+---
+
+### 5. Yazar ve Teşekkürler
+
+**Yazar:**  
+Eren Taha Akkuş – Windows İç Yapısı, Saldırı/Savunma Güvenliği ve Tersine Mühendislik alanlarında uzmanlaşmış Türk Siber Güvenlik Araştırmacısı.
+
+**GitHub:** [erenakkus412-lang](https://github.com/erenakkus412-lang)
+
+**Teşekkürler:**  
+- Dolaylı syscall'lar ve COM Elevator hakkındaki araştırmaları paylaşan geniş Windows güvenlik topluluğu.
+- COM Elevator tekniği üzerine ilk kamu araştırması için xaitax (yalnızca ilham kaynağı; buradaki uygulama tamamen özgündür).
+
+---
+
+**© 2026 Eren Taha Akkuş. Tüm hakları saklıdır. / All rights reserved.**
