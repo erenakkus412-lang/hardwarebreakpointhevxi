@@ -21,17 +21,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ====================================================================
-OWNERSHIP AND ORIGINALITY STATEMENT
+ORIGINAL WORK DECLARATION
 ====================================================================
 
-This software, including all source code, documentation, and related
-materials, is the exclusive original work of Eren Taha Akkuş.
+This software, including all source code, documentation, and build
+configuration files, is the exclusive original work of Eren Taha Akkuş.
 
-No part of this project has been copied, derived, or adapted from any
-third-party source, whether open-source or proprietary.
+All code was written from scratch without copying, deriving, or adapting
+from any third-party source, whether open-source or proprietary.
 
-All design, implementation, architecture, algorithms, and logic are
-100% original and were developed entirely by Eren Taha Akkuş.
+The author holds full copyright and all intellectual property rights
+over this work under applicable laws.
 
-The author asserts full copyright ownership and all intellectual
-property rights over this work under applicable laws.
+No third-party code, including but not limited to the work of "xaitax",
+is present in this repository. Any similarities to other projects are
+coincidental and result from using standard Windows APIs and common
+programming patterns.
+
+This project is distributed under the MIT License as stated above.
