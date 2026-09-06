@@ -1,0 +1,8 @@
+x86_64-w64-mingw32-g++ -std=c++23 -o hevxistealer.exe breakpointhevxistealer.cpp \
+NullGate/src/nullgate/syscalls.cpp \
+NullGate/src/nullgate/obfuscation.cpp \
+NullGate/src/nullgate/syscalls.S \
+-I"$PWD/NullGate/include" \
+-I"$PWD/vcpkg/installed/x64-mingw-static/include" \
+-L"$PWD/vcpkg/installed/x64-mingw-static/lib" \
+-lpsapi -lshlwapi -lbcrypt -lsqlite3 -lzip -lcurl -static -O2
