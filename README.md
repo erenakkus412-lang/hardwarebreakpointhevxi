@@ -27,3 +27,6 @@ Developed by **Eren Taha Akkuş**, a dedicated and passionate **Turkish Cybersec
 2. Compile with x64 architecture (e.g., using MSVC or MinGW-w64).
 3. Run as Administrator to grant SeDebugPrivilege for process debugging.
 4. Observe the console output as the framework analyzes a test process and configures hardware breakpoints.
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
