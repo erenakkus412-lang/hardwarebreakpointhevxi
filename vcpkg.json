@@ -1,0 +1,12 @@
+{
+  "name": "hardwarebreakpointhevxi",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "curl",
+    "libzip",
+    "sqlite3",
+    "zlib",
+    "bzip2",
+    "openssl"
+  ]
+}
