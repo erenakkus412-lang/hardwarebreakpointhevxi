@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['compilehevximenu.py'],
+    ['compilemenu1.py'],
     pathex=[],
     binaries=[],
     datas=[],
