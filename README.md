@@ -77,6 +77,23 @@ The sole purpose of this framework is to help security professionals understand 
 
 ---
 
+### Build Instructions via Python Compiler (`compilemenuv1.py`)
+
+---
+
+**ENGLISH:**
+
+1. Download or clone the project repository to your local machine.  
+2. Open your terminal or command prompt and navigate to the target project root directory.  
+3. Run the build script by executing the following command:  
+   `python3 compilemenuv1.py`  
+4. When prompted, enter the required decryption / build password.  
+5. The compilation process will start automatically.  
+6. If the `build` folder does not already exist in the directory, the script will create it automatically.  
+7. After the compilation finishes successfully, all compiled `.exe` files will be written inside this newly created (or existing) `build` folder.
+
+---
+
 ### 5. Author & Acknowledgments
 
 **Author:**  
@@ -164,6 +181,23 @@ Bu çerçevenin tek amacı, güvenlik uzmanlarının düşük seviyeli Windows A
 - Bu yazılımı indirerek, derleyerek veya çalıştırarak, bu reddi okuduğunuzu ve eylemlerinizin tüm sorumluluğunu üstlenmeyi kabul ettiğinizi beyan edersiniz.
 
 ---
+
+### Build Instructions via Python Compiler (`compilemenuv1.py`)
+
+---
+
+---
+
+**TÜRKÇE:**
+
+1. Proje deposunu (repository) bilgisayarınıza indirin veya klonlayın.  
+2. Terminal ya da komut istemcisini (CMD) açarak hedef projenin ana dizinine gidin.  
+3. Derleme betiğini çalıştırmak için aşağıdaki komutu girin:  
+   `python3 compilemenuv1.py`  
+4. Karşınıza gelen şifre sorusuna, derleme / şifre çözme işlemi için gereken şifreyi yazın.  
+5. Derleme işlemi otomatik olarak başlayacaktır.  
+6. Eğer dizin içerisinde `build` klasörü zaten yoksa, betik bu klasörü otomatik olarak oluşturacaktır.  
+7. Derleme başarıyla tamamlandıktan sonra, derlenen tüm `.exe` dosyaları bu `build` klasörünün içerisine yazılacaktır.
 
 ### 5. Yazar ve Teşekkürler
 
