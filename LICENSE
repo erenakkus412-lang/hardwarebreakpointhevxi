@@ -1,56 +1,37 @@
-/*
- *  MIT License
- *
- *  Copyright (c) 2026 Eren Taha Akkuş
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
- *
- *  ============================================================
- *  EXACT CONTRIBUTION AND OWNERSHIP STATEMENT
- *  ============================================================
- *
- *  - The ENTIRE Hardware Breakpoint (Donanım Kesme Noktası / DR0/DR7)
- *    implementation, logic, and all related core code in this project
- *    were coded from scratch 100% by Eren Taha Akkuş.
- *
- *  - The ONLY piece taken from an external source is the COM/DLL-based
- *    ABE bypass methodology. A basic draft/template of this specific
- *    bypass technique was originally shared by the user "xaitax".
- *
- *  - Regarding that "xaitax" draft:
- *       * All compilation errors present in the original draft have
- *         been completely fixed.
- *       * System stability and runtime performance have been greatly
- *         improved.
- *       * New features and additional functionalities have been added.
- *       * A fully working compilation menu has been designed and
- *         integrated into the project.
- *
- *  - CRITICAL: Apart from the basic bypass template taken from "xaitax",
- *    EVERY OTHER line of code, every module, the entire project architecture,
- *    all fixes, improvements, extra features, and the complete working
- *    build environment are the exclusive work and intellectual property
- *    of Eren Taha Akkuş.
- *
- *  - To summarize clearly:
- *       * Hardware Breakpoint logic          =>  Eren Taha Akkuş (100%)
- *       * ABE bypass method draft            =>  xaitax (template only)
- *       * All fixes, menu, stability, extras =>  Eren Taha Akkuş (100%)
- *       * Project ownership and all rights   =>  Eren Taha Akkuş
- */
+MIT License
+
+Copyright (c) 2026 Eren Taha Akkuş
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+====================================================================
+OWNERSHIP AND ORIGINALITY STATEMENT
+====================================================================
+
+This software, including all source code, documentation, and related
+materials, is the exclusive original work of Eren Taha Akkuş.
+
+No part of this project has been copied, derived, or adapted from any
+third-party source, whether open-source or proprietary.
+
+All design, implementation, architecture, algorithms, and logic are
+100% original and were developed entirely by Eren Taha Akkuş.
+
+The author asserts full copyright ownership and all intellectual
+property rights over this work under applicable laws.
