@@ -21,27 +21,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  *
- *  ========================================================
- *  CONTRIBUTION AND ATTRIBUTION NOTES
- *  ========================================================
+ *  ============================================================
+ *  EXACT CONTRIBUTION AND OWNERSHIP STATEMENT
+ *  ============================================================
  *
- *  - The COM/DLL-based ABE bypass methodology used as the foundation of
- *    this project was originally sourced from the work of the user "xaitax".
+ *  - The ENTIRE Hardware Breakpoint (Donanım Kesme Noktası / DR0/DR7)
+ *    implementation, logic, and all related core code in this project
+ *    were coded from scratch 100% by Eren Taha Akkuş.
  *
- *  - However, all of the following critical enhancements and developments
- *    were exclusively implemented by Eren Taha Akkuş:
+ *  - The ONLY piece taken from an external source is the COM/DLL-based
+ *    ABE bypass methodology. A basic draft/template of this specific
+ *    bypass technique was originally shared by the user "xaitax".
  *
- *       * Designing and integrating the compilation menu required to
- *         build the project properly.
- *       * Identifying, debugging, and resolving all compilation errors
- *         that existed in the original ABE bypass source codes.
- *       * Fixing runtime issues and logic flaws to ensure system
- *         stability.
- *       * Introducing new features and overall functionality upgrades.
- *       * Optimizing the entire codebase to guarantee that the project
- *         compiles and operates flawlessly in its current state.
+ *  - Regarding that "xaitax" draft:
+ *       * All compilation errors present in the original draft have
+ *         been completely fixed.
+ *       * System stability and runtime performance have been greatly
+ *         improved.
+ *       * New features and additional functionalities have been added.
+ *       * A fully working compilation menu has been designed and
+ *         integrated into the project.
  *
- *  - In summary: While the base bypass method is attributed to "xaitax",
- *    the fully working, stable, and enhanced build environment is the
- *    result of Eren Taha Akkuş's comprehensive development efforts.
+ *  - CRITICAL: Apart from the basic bypass template taken from "xaitax",
+ *    EVERY OTHER line of code, every module, the entire project architecture,
+ *    all fixes, improvements, extra features, and the complete working
+ *    build environment are the exclusive work and intellectual property
+ *    of Eren Taha Akkuş.
+ *
+ *  - To summarize clearly:
+ *       * Hardware Breakpoint logic          =>  Eren Taha Akkuş (100%)
+ *       * ABE bypass method draft            =>  xaitax (template only)
+ *       * All fixes, menu, stability, extras =>  Eren Taha Akkuş (100%)
+ *       * Project ownership and all rights   =>  Eren Taha Akkuş
  */
